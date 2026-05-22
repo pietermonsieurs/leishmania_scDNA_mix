@@ -1,1 +1,5 @@
 # leishmania_scDNA_mix
+
+## Input data 
+* fastq files of the atrandi output are stored in the directory /user/antwerpen/205/vsc20587/aitg_data/jcdujardin/MRC_singlecell_Atrandi_20260506/01.RawData/. The library contains 4 libraries, each with a mixture of 8 different strains. Those 4 libraries are distributed over two different Illumina lanes, so we get 2 pairs of fastq files (R1 and R2) for each library. The 4 libraries are named as follows: PTA01UDI5, PTA02UDI6, PTA03UDI7, PTA04UDI8. The one where indexes could not be correctly read, are stored as Undetermined
+* `demux_explorative_2.py` is an exploratory script that reads up to 1 million R2 records from a gzipped FASTQ file, builds 4-part barcodes from fixed positions in each read, and writes a sorted barcode count table to `results/demux/` for quick inspection of barcode composition.
