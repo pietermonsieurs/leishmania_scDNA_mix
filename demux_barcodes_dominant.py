@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 #SBATCH --ntasks=1 --cpus-per-task=1
-#SBATCH --time=0:50:00
+#SBATCH --mem-per-cpu=10G
+#SBATCH --time=70:50:00
 #SBATCH --job-name=count
 #SBATCH -A ap_itg_mpu
 
@@ -9,10 +10,11 @@
 import gzip
 from collections import defaultdict
 import argparse
+import os
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process FASTQ files to count barcodes.")
-    parser.add_argument("--fastq", required=True, help="Path to the input FASTQ file")
+    parser.add_argument("--fastq", required=True, help="Path to the input FASTQ file OR a directory containing FASTQ files. If a directory is provided, all FASTQ files in the directory and its subdirectories will be processed.")
     parser.add_argument("--output", help="Path to the output barcode count file. If not provided, inferred from FASTQ file.")
     parser.add_argument("--limit", type=int, default=None, help="Optional limit to the number of reads to process.")
     parser.add_argument("--mincount", type=int, default=10000, help="Optional number to limit the number of cells to only those cells that have more than this number of barcodes")
@@ -36,6 +38,33 @@ def process_fastq(fastq_file, limit=None):
 
                 if limit and count >= limit:
                     break
+            if count % 10000 == 0:
+                print(f"Processed {count} lines, found {len(count_barcode)} unique barcodes so far...")
+
+    return count_barcode
+
+def process_fastq_dir(fastq_file_dir, limit=None):
+    count_barcode = defaultdict(int)
+    count = 0
+
+    ## loop over all fastq files in the directory, also in the subdirectories
+    for root, dirs, files in os.walk(fastq_file_dir):
+        for file in files:
+            if file.endswith("_2.fq.gz"):
+                fastq_file = os.path.join(root, file)
+
+                with gzip.open(fastq_file, 'rt') as f:
+                    for i, line in enumerate(f, start=1):
+                        if (i - 2) % 4 == 0:  # Process the sequence line
+                            count += 1
+                            read = line.strip()
+
+                            barcode = f"{read[:8]}_{read[12:20]}_{read[24:32]}_{read[36:44]}"
+                            if 'N' not in barcode:
+                                count_barcode[barcode] += 1
+
+                            if limit and count >= limit:
+                                break
 
     return count_barcode
 
@@ -112,7 +141,13 @@ def main():
 
     whitelist_file = args.whitelist
 
-    barcode_counts = process_fastq(fastq_file, limit=args.limit)
+    ## check whether the input is a directory or a file
+    if os.path.isdir(fastq_file):
+        print(f"Input is a directory. Processing all FASTQ files in the directory: {fastq_file}")
+        barcode_counts = process_fastq_dir(fastq_file, limit=args.limit)
+    else:
+        print(f"Input is a file. Processing FASTQ file: {fastq_file}")
+        barcode_counts = process_fastq(fastq_file, limit=args.limit)
 
     write_barcode_counts(barcode_counts, output_file, mincount, whitelist_file)
     print(f"barcode counts written to: {output_file}")

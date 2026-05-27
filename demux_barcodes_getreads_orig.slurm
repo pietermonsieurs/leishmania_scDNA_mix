@@ -10,16 +10,19 @@ module load Python/3.12.3-GCCcore-13.3.0
 
 ## export PATH and specify parameters 
 export PYTHONPATH="/user/antwerpen/205/vsc20587/data/software/python_lib/lib/python3.12/site-packages/:${PYTHONPATH}"
-export PATH=/user/antwerpen/205/vsc20587/data/software/python_lib/bin/:/user/antwerpen/205/vsc20587/data/software/seqtk/:/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/:${PATH}
+export PATH=/user/antwerpen/205/vsc20587/data/software/python_lib/bin/:/user/antwerpen/205/vsc20587/data/software/seqtk/:/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/bin/:${PATH}
 
-#### do echoing of the parameters for debugging purposes
-echo "barcode file ${barcode_file}"
-echo "fastq file R1 ${fastq_file_R1}"
-echo "fastq file R2 ${fastq_file_R2}"
-echo "demux dir ${demux_dir}"
+#### scDNA_AT_01 ####
+# demux_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_01/
+# fastq_file_R1=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/data/fastq/scDNA_AT_01_1.fq.gz
+# fastq_file_R2=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/data/fastq/scDNA_AT_01_2.fq.gz
+# source <(aenv --no_sniffer --data /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_01_barcodes.txt)
 
-## do the atools magic to get the barcode for this job
-source <(aenv --no_sniffer --data ${barcode_file})
+#### scDNA_AT_02 ####
+demux_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_02/
+fastq_file_R1=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/data/fastq/scDNA_AT_02_1.fq.gz
+fastq_file_R2=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/data/fastq/scDNA_AT_02_2.fq.gz
+source <(aenv --no_sniffer --data /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_02_barcodes.txt)
 echo "barcdode ${barcode}"
 
 ## extract for the barcode all the read IDs that should be extracted
@@ -65,4 +68,5 @@ gzip ${fastq_file_barcode_R2}
 # mkdir -p python3.12/site-packages/
 # export PYTHONPATH="/user/antwerpen/205/vsc20587/data/software/python_lib/lib/python3.12/site-packages/:${PYTHONPATH}"
 # pip3 install --prefix=/user/antwerpen/205/vsc20587/data/software/python_lib/ cutadapt
+
 
