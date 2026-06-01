@@ -79,6 +79,9 @@ ggplot(barcode_long, aes(x = sample, y = count, fill = encapsulation)) +
        y = "Count of Barcodes") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+## coverage per sample
+head(barcode_long)
+
 
 ## same barplot, but count rather the number of unique barcode instead of taking
 ## the count of the barcode into account
@@ -93,3 +96,41 @@ ggplot(barcode_long_unique, aes(x = sample, y = unique_barcodes, fill = encapsul
        x = "Sample",
        y = "Number of Unique Barcodes") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+## do coverage analysis
+
+barcode_count_file = paste0(data_dir, 'dominant_barcodes_merged.txt')
+barcode_df <- read.table(barcode_count_file, header=TRUE)
+
+colnames(barcode_df)[-1] <- gsub("_MKDL2600063...1A_23HK37LT4", "", colnames(barcode_df)[-1])
+colnames(barcode_df)[-1] <- gsub("_Undetermined_23HK37LT4", "", colnames(barcode_df)[-1])
+head(barcode_df)
+dim(barcode_df)
+
+## plot densities based on the number of reads per barcode
+ggplot(barcode_df, aes(x=log10(count))) + 
+  geom_density(aes(color = encapsulation), size = 1) + 
+  theme_bw() + 
+  labs(title = "log10 count distribution per encapsulation",
+       x = "log 10 counts per barcode",
+       y = "density")
+
+## count the number of 
+
+## convert the number to a theoretical "average" coverage starting from a hypothetical 
+## genome size of 35Mbp
+barcode_df$coverage = (barcode_df$count*250)/35000000
+## plot densities based on the number of reads per barcode
+ggplot(barcode_df, aes(x=log10(coverage))) + 
+  geom_density(aes(color = encapsulation), size = 1) + 
+  theme_bw() + 
+  labs(title = "Average coverage",
+       x = "Average coverage for 35Mbp genome",
+       y = "density") + 
+  coord_cartesian(xlim=c(0,3))
+
+
+
+
+
