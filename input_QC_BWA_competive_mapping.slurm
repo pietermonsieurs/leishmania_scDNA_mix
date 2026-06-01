@@ -21,7 +21,7 @@ ref_genome=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/data/refgen
 
 ## only select the first part of the prefix, before first _
 prefix=$(basename ${fastq_file} _1.fq.gz)
-prefix=${prefix%%_*}
+# prefix=${prefix%%_*}
 echo $prefix
 
 ## only select the first 10 millions reads for testing from the fastq file
@@ -29,7 +29,10 @@ zcat ${fastq_file} | head -n 40000000 > ${fastq_dir}/${prefix}_R1_truncated.fq
 
 ## run BWA-MEM for competitive mapping
 bwa mem -t 28 ${ref_genome} ${fastq_dir}/${prefix}_R1_truncated.fq | samtools view -bS - > ${results_dir}/${prefix}_R1_truncated.bam
-samtools idxstats ${results_dir}/${prefix}_R1_truncated.bam > ${results_dir}/${prefix}_R1_truncated_stats.txt
+samtools sort -@ 28 -o ${results_dir}/${prefix}_R1_truncated_sorted.bam ${results_dir}/${prefix}_R1_truncated.bam
+samtools index ${results_dir}/${prefix}_R1_truncated_sorted.bam
+samtools idxstats ${results_dir}/${prefix}_R1_truncated_sorted.bam > ${results_dir}/${prefix}_R1_truncated_stats.txt
+
 
 ## loop over all fastq files in the directory and start sbatch for each of them
 # data_dir=/user/antwerpen/205/vsc20587/aitg_data/jcdujardin/MRC_singlecell_Atrandi_20260506/01.RawData/
