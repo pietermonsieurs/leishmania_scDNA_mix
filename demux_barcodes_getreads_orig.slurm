@@ -19,9 +19,8 @@ echo "fastq file R2 ${fastq_file_R2}"
 echo "demux dir ${demux_dir}"
 
 ## do the atools magic to get the barcode for this job
-# source <(aenv --no_sniffer --data ${barcode_file})
-barcode=$(sed -n "${SLURM_ARRAY_TASK_ID}p" ${barcode_file})
-echo "processing barcdode ${barcode}"
+source <(aenv --no_sniffer --data ${barcode_file})
+echo "barcdode ${barcode}"
 
 ## extract for the barcode all the read IDs that should be extracted
 ## from the fastq-files. The output of this 
@@ -40,6 +39,23 @@ seqtk subseq ${fastq_file_R1} ${read_id_file} | gzip > ${fastq_file_barcode_R1}
 seqtk subseq ${fastq_file_R2} ${read_id_file} | gzip > ${fastq_file_barcode_R2_with_bc}
 cutadapt --cut 48 -o ${fastq_file_barcode_R2} ${fastq_file_barcode_R2_with_bc}
 gzip ${fastq_file_barcode_R2}
+
+
+## run for all barcodes
+## sample scDNA_01
+# cd /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/
+# cut -f 1 scDNA_AT_01_barcode_counts.txt > scDNA_AT_01_barcodes.txt
+# vi /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_01_barcodes.txt ## add barcode to the top of the file
+# module load atools
+# sbatch --array $(arange --no_sniffer --data /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_01_barcodes.txt) /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/bin/demux_barcodes_getreads.slurm
+
+
+## sample scDNA_02
+# cd /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/
+# cut -f 1 scDNA_AT_02_barcode_counts.txt > scDNA_AT_02_barcodes.txt
+# vi /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_02_barcodes.txt ## add barcode to the top of the file
+# module load atools
+# sbatch --array $(arange --no_sniffer --data /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/results/demux/scDNA_AT_02_barcodes.txt) /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_atrandi/bin/demux_barcodes_getreads.slurm
 
 
 

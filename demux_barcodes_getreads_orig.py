@@ -44,8 +44,8 @@ def get_read_ids(barcode, fastq_file, min_distance):
 
                     read_ids_list.append(read_id)
                     # print(f"{len(read_ids_list)}", end="\r")
-            if i > 100000000:
-                break
+            # if i > 1000000:
+            #     break
 
 
     return read_ids_list   
@@ -55,7 +55,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Select fastq read IDs based on the dominant barcodes")
     parser.add_argument("--barcode", required=True, help="Barcode where you want to select representative reads for")
     parser.add_argument("--fastq", required=True, help="Path to the fastq file you want to select the reads from")
-    parser.add_argument("--outputdir", required=True, help="Directory where to write the sequence read IDs. Filename will consist of the barcode + .readids.txt")
+    parser.add_argument("--outputdir", required=True, help="Directory where to write the sequence read IDs. Filename will consist of the barcode + txt")
     parser.add_argument("--distance", required=False, type=int, default=1, help="maximum hamming distance per barcode of 8 nt")
     
     # parser.add_argument("--mincount", type=int, default=10000, help="Optional number to limit the number of cells to only those cells that have more than this number of barcodes")
