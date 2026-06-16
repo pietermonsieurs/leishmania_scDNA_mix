@@ -44,8 +44,8 @@ def get_read_ids(barcode, fastq_file, min_distance):
 
                     read_ids_list.append(read_id)
                     # print(f"{len(read_ids_list)}", end="\r")
-            if i > 100000000:
-                break
+            # if i > 100000000:
+            #     break
 
 
     return read_ids_list   
