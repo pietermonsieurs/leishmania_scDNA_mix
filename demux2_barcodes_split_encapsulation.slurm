@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 #SBATCH --ntasks=1 --cpus-per-task=1
-#SBATCH --mem-per-cpu=100G
+#SBATCH --mem=200G
 #SBATCH --time=50:50:00
 #SBATCH --job-name=demux_fastq
 #SBATCH -A ap_itg_mpu
@@ -32,18 +32,19 @@ output_dir=${output_dir_src}/${fastq_prefix}/
 mkdir -p $output_dir
 
 ## run the demultiplexing script to get a list of readIDs per encapsulation
-echo "Running demultiplexing script to get readIDs per encapsulation"
-demux2_barcodes_split_encapsulation.py \
-    --barcode_file $barcode_file \
-    --output_dir $output_dir \
-    --fastq_file $fastq_file_R2
+# echo "Running demultiplexing script to get readIDs per encapsulation"
+# demux2_barcodes_split_encapsulation.py \
+#     --barcode_file $barcode_file \
+#     --output_dir $output_dir \
+#     --fastq_file $fastq_file_R2
 
 
 ## run seqtk to extract the reads for this barcode from the fastq files for each of the 
 ## encapsulations, and trim the R2 reads to remove the barcode sequence (48bp) at the start of the read
 
 echo "Extracting reads for each encapsulation and trimming R2 reads to remove barcode sequence"
-for encaps in encaps1 encaps2 encaps3 encaps4; do
+# for encaps in encaps1 encaps2 encaps3 encaps4; do
+for encaps in encaps3; do
     ## define files
     read_id_file=${output_dir}/${encaps}_read_ids.txt
     fastq_file_encaps_R1=${output_dir}/${encaps}_R1.fq.gz
@@ -59,4 +60,4 @@ done
 
 ## loop over the different fastq files
 # data_dir=/user/antwerpen/205/vsc20587/aitg_data/jcdujardin/MRC_singlecell_Atrandi_20260506/01.RawData
-# for fastq_file_R1 in $(find ${data_dir} -name "*_1.fq.gz"); do sbatch --export=fastq_file_R1=${fastq_file_R1} demux2_barcodes_split_encapsulation.slurm; done
+# for fastq_file_R1 in $(find ${data_dir} -name "*_1.fq.gz"); do sbatch --export=fastq_file_R1=${fastq_file_R1} /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/demux2_barcodes_split_encapsulation.slurm; done

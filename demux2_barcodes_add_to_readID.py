@@ -93,7 +93,8 @@ if __name__ == "__main__":
 
 # cd /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/results/demux
 # for dir in PTA* Und*; do
-#     for fastq_file_R1 in ${PWD}/${dir}/*R1.fq.gz; do
+#     # for fastq_file_R1 in ${PWD}/${dir}/*R1.fq.gz; do
+#     for fastq_file_R1 in ${PWD}/${dir}/encaps3_R1.fq.gz; do
 #         echo $fastq_file_R1
 #         sbatch /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/demux2_barcodes_add_to_readID.py --fastq_file ${fastq_file_R1}
 #     done
