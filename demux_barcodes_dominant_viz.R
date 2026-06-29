@@ -17,13 +17,16 @@ dim(barcode_df)
 overlap <- matrix(0, nrow = ncol(barcode_df) - 3, ncol = ncol(barcode_df) - 3)
 colnames(overlap) <- colnames(barcode_df)[2:(ncol(barcode_df)-2)]
 rownames(overlap) <- colnames(barcode_df)[2:(ncol(barcode_df)-2)]
-
+head(overlap)
+dim(overlap)
 table(barcode_df$encapsulation)
 
 ## create a heatmap with the overlap between the different samples
 combi = 0
-for (sample1 in colnames(barcode_df)[-1]) {
-  for (sample2 in colnames(barcode_df)[-1]) {
+for (sample1 in colnames(barcode_df)[2:(ncol(barcode_df) - 2)]) {
+  print(sample1)
+  for (sample2 in colnames(barcode_df)[2:(ncol(barcode_df) - 2)]) {
+    print(sample2)
     combi = combi + 1
     overlap_count <- sum(barcode_df[[sample1]] > 0 & barcode_df[[sample2]] > 0)
     overlap[sample1, sample2] <- overlap_count
@@ -49,7 +52,7 @@ Heatmap(overlap,
 
 
 ## create a heatmap with all barcode
-Heatmap(log10(barcode_df[,-1]+1),
+Heatmap(log10(barcode_df[,2:(ncol(barcode_df)-2)]+1),
         name = "Barcode Count",
         #col = colorRamp2(c(0, max(barcode_df[,-1])), c("white", "red")),
         cluster_rows = TRUE,
@@ -131,6 +134,13 @@ ggplot(barcode_df, aes(x=log10(coverage))) +
   coord_cartesian(xlim=c(0,3))
 
 
+## get some stats
+for (encaps_id in seq(1,4)) {
+  encaps = paste0("encaps", encaps_id)
+  df_sub = barcode_df[barcode_df$encapsulation == encaps,]
+  print(colSums(df_sub[,2:(ncol(df_sub)-2)]))
+  
+}
 
 
 

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "SSH FS - calcua_leishmania_scdna_mix",
+			"uri": "ssh://calcua_leishmania_scdna_mix/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin"
+		}
+	],
+	"settings": {}
+}
