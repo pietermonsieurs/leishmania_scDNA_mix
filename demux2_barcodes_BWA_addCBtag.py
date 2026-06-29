@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-#SBATCH --ntasks=1 --cpus-per-task=4
-#SBATCH --time=70:50:00
-#SBATCH --job-name=CB_tag
-#SBATCH -A ap_itg_mpu
-
 ## module load Pysam
 
 import pysam
@@ -25,8 +20,10 @@ bam_file_out = f"{bam_dir}/{encaps}.cb.bam"
 bam = pysam.AlignmentFile(bam_file_in, "rb")
 out = pysam.AlignmentFile(bam_file_out, "wb", template=bam)
 
-for read in bam:
+count = 0
 
+for read in bam:
+    count = count + 1
     m = re.search(r'_CB:(.*)$', read.query_name)
 
     if m:
@@ -37,8 +34,9 @@ for read in bam:
 
     out.write(read)
 
+    if count % 1000000 == 0:
+        print(f"Processed {count} reads")
+
 bam.close()
 out.close()
 
-## run over all encaps
-# for encaps in encaps1 encaps2 encaps3 encaps4; do sbatch /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/demux2_barcodes_BWA_addCBtag.py --encaps $encaps; done

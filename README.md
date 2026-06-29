@@ -28,3 +28,16 @@
         * reads all `*_stats.txt` files from the competitive mapping results folder
         * assigns each contig to a species label based on contig-name patterns
         * simplifies sample names and generates a stacked bar plot of mapped reads per library and species
+
+## demultiplexing
+* split all the reads per encapsulation based on the first barcode in the R2 reads
+    * [demux2_barcodes_split_encapsulation.py](demux2_barcodes_split_encapsulation.py): starts from a list of dominant barcodes (dominant_barcodes_merged.txt) and create per sequencing library a list of read IDs per encapsulation. This list is used in the accompanying script to split the reads per encapsulation [demux2_barcodes_split_encapsulation.slurm](demux2_barcodes_split_encapsulation.slurm) to split up the reads per encapsulation using the seqtk tool, which has as output a fastq file for each encapsulation, containing all reads that have the same first barcode in the R2 read. For the R2 fastq file this contains both a fastq file with and without the barcode (_with_bc.fq.gz)
+    * add for each fastq file the R2-derived barcode to the read ID in all fastq files, so that we can make a per-barcode (= single cell bam file) for each cell using [demux2_barcodes_add_to_readID.py](demux2_barcodes_add_to_readID.py), and write this per library
+    * over all libraries, concatenate the fastq files and make one fastq file per encapsulation in the concat directory [demux2_barcodes_concat_fastq_files.sh](demux2_barcodes_concat_fastq_files.sh)
+* Run BWA
+    * create reference genomes for the different settings of mixed strains, based on the first barcode in the R2 reads
+        * combine the two strains per encapsulation and create a reference genome for each encapsulation (= containing 2 strains)
+        * [demux2_barcodes_BWA_refgenomes.sh](demux2_barcodes_BWA_refgenomes.sh) creates the reference genomes for the 4 different encapsulations, and builds the BWA index for each of them
+    * run BWA and map all reads per encapsulation against the corresponding reference genome, using [demux2_barcodes_BWA.slurm](demux2_barcodes_BWA.slurm)
+    * add the CB tag to the BAM files, using [demux2_barcodes_BAM_addCBtag.slurm](demux2_barcodes_BAM_add_CB_tag.slurm) and the corresponding python script [demux2_barcodes_BAM_addCBtag.py](demux2_barcodes_BAM_addCBtag.py). This script parses the cellular barcode from the fastq file and adds it to the BAM file as a CB tag. The output is a BAM file per encapsulation, with the CB tag added to each read.
+    
