@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
-#SBATCH --ntasks=1 --cpus-per-task=4
-#SBATCH --mem=120G
+#SBATCH --ntasks=1 --cpus-per-task=16 --nodes=1 --partition=zen3_512
+#SBATCH --mem=480G
 #SBATCH --time=70:50:00
 #SBATCH --job-name=splitBC
 #SBATCH -A ap_itg_mpu
@@ -27,7 +27,6 @@ cp -r ${out_dir} ${bwa_dir}/${encaps}_split_bams/
 
 ## loop over encapsulation files and submit a job for each one
 # for encaps in encaps1 encaps2 encaps3 encaps4; do
-# for encaps in encaps4; do
 #     sbatch --export=encaps=${encaps} /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/demux2_barcodes_BWA_bam_per_CB.slurm
 # done
 # for encaps in encaps2 encaps3; do
