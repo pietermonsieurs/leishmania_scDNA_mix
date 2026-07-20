@@ -1,7 +1,8 @@
 ## split the bam files into text files of bam files of 100 files each
 batch_size=100
 
-for encaps in encaps1 encaps2 encaps3 encaps4; do
+# for encaps in encaps1 encaps2 encaps3 encaps4; do
+for encaps in encaps3; do
     encaps_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/results/bwa/${encaps}_split_bams/
     bam_files=($(ls ${encaps_dir}/*.bam))
     total_files=${#bam_files[@]}
@@ -22,7 +23,8 @@ done
 
 ## loop over all the text files in the different encaps directories and run the deeptools commands
 # for encaps in encaps1 encaps2 encaps3 encaps4; do
-for encaps in encaps1 encaps2 encaps4; do
+# for encaps in encaps1 encaps2 encaps4; do
+for encaps in encaps3; do
     ## specify directories
     encaps_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/results/bwa/${encaps}_split_bams/
     output_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/results/deeptools/${encaps}/
@@ -36,10 +38,7 @@ for encaps in encaps1 encaps2 encaps4; do
         sbatch \
             --export=batch_file=${batch_file},output_dir=${output_dir} \
             /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/somy_deeptools.slurm
-        # Run deeptools commands here, for example:
-        # bamCoverage -b $(cat "$batch_file") -o ${output_prefix}_coverage.bw
-        # computeMatrix reference-point -S $(cat "$batch_file") -R reference.bed -o ${output_prefix}_matrix.gz
-        # plotHeatmap -m ${output_prefix}_matrix.gz -out ${output_prefix}_heatmap.png
+
     done
 done
 

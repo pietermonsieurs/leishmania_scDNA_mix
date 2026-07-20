@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH --ntasks=1 --cpus-per-task=64
+#SBATCH --ntasks=1 --cpus-per-task=28
 #SBATCH --time=70:50:00
 #SBATCH --job-name=demux_fastq
 #SBATCH -A ap_itg_mpu
@@ -16,7 +16,7 @@ ref_genome_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/data/re
 fastq_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/results/demux/concat/
 bam_dir=/user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/results/bwa/
 seed=30
-threads=64
+threads=28
 
 ## create variables
 ref_genome=${ref_genome_dir}/${encaps}.fasta
@@ -37,15 +37,15 @@ echo "File prefix: $file_prefix"
 echo "BAM file prefix: $bam_file_prefix"   
 
 ## run BWA mem to align the reads to the reference genome
-bwa mem \
-    -R "@RG\tID:${file_prefix}\tSM:${file_prefix}\tPL:ILLUMINA" \
-    -k $seed \
-    -t $threads \
-    $ref_genome \
-    $fastq_file_R1 $fastq_file_R2 | \
-    samtools sort -@$threads -o ${bam_file_prefix}.bam
-samtools index ${bam_file_prefix}.bam
-samtools flagstat -@$THREADS ${bam_file_prefix}.bam > ${bam_file_prefix}.flagstat
+# bwa mem \
+#     -R "@RG\tID:${file_prefix}\tSM:${file_prefix}\tPL:ILLUMINA" \
+#     -k $seed \
+#     -t $threads \
+#     $ref_genome \
+#     $fastq_file_R1 $fastq_file_R2 | \
+#     samtools sort -@$threads -o ${bam_file_prefix}.bam
+# samtools index ${bam_file_prefix}.bam
+samtools flagstat -@$threads ${bam_file_prefix}.bam > ${bam_file_prefix}.flagstat
 
 ## run for all encapsulations
 # for encaps in encaps1 encaps2 encaps3 encaps4; do sbatch --export=encaps=$encaps /user/antwerpen/205/vsc20587/scratch/leishmania_scDNA_mix/bin/demux2_barcodes_BWA.slurm; done

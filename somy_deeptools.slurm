@@ -34,18 +34,19 @@ while read -r bam_file; do
     base_name=$(basename "$bam_file" .bam)
 
     # define the output file name for the bedgraph file
-    output_file=${output_dir}/${base_name}.bedgraph
+    # output_file=${output_dir}/${base_name}.bedgraph
+    output_file=${output_dir}/${base_name}.bw
     echo ${output_file}
 
     ## run deeptools
     bamCoverage \
         --bam $bam_file \
         --outFileName $output_file \
-        --outFileFormat bedgraph \
         --binSize $bin_size \
-        --normalizeUsing CPM \
-        --numberOfProcessors $threads
-        # --skipNonCoveredRegions
+        --normalizeUsing None \
+        --numberOfProcessors $threads #\
+        # --outFileFormat bedgraph \
+        #--skipNonCoveredRegions
 
 done < ${batch_file}
 
